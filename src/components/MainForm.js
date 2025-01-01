@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { saveHistory } from "../utils/contactUtils";
+import countryCodeToAbbreviation from './countryCodes';
+
 
 const MainForm = ({ setContactHistory, setYourContacts }) => {
   const [countryCode, setCountryCode] = useState("91");
@@ -8,11 +10,16 @@ const MainForm = ({ setContactHistory, setYourContacts }) => {
   const [name, setName] = useState("");
   const [error, setError] = useState(false);
   const [qrLink, setQrLink] = useState("");
+  const [countryFlag, setCountryFlag] = useState("in");
 
   const handleCountryCode = (event) => {
     const newCountryCode = event.target.value.replace(/\D/g, "");
     setCountryCode(newCountryCode);
-    
+
+    // Get the country abbreviation based on the country code
+    const flagAbbreviation = countryCodeToAbbreviation[newCountryCode] || "in"; // Default to "us" if not found
+    setCountryFlag(flagAbbreviation);
+
     // Generate QR code if the number is valid
     if (validNumber) {
       setQrLink(
@@ -92,13 +99,21 @@ const MainForm = ({ setContactHistory, setYourContacts }) => {
           <div className="row">
             <div className="col-12">
               <p className="text-dark text-sm">Country</p>
-              <input
-                onChange={handleCountryCode}
-                value={countryCode}
-                type="text"
-                className="form-control"
-                placeholder="Country Code"
-              />
+              <div className="d-flex align-items-center">
+                {/* Flag based on country abbreviation */}
+                <img
+                  src={`https://flagcdn.com/w320/${countryFlag}.png`}
+                  alt="Flag"
+                  style={{ width: "30px", height: "20px", marginRight: "10px" }}
+                />
+                <input
+                  onChange={handleCountryCode}
+                  value={countryCode}
+                  type="text"
+                  className="form-control"
+                  placeholder="Country Code"
+                />
+              </div>
             </div>
             <div className="col-12 d-sm-block d-none">
               {validNumber ? (
